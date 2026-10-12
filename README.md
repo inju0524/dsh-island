@@ -17,51 +17,73 @@
 
 ---
 
-## 一、概述与核心特性
+## 一、丝滑动效展示
 
-给 **DeepSeek Harness** 装上专属于桌面的 **Apple Dynamic Island + Liquid Glass（次世代液态玻璃）** 悬浮通知与交互总线。
+### 1. 液态形变与展开收缩（Fluid Morphing Lifecycle）
+基于 Apple 原生 `cubic-bezier(.32, .72, 0, 1)` 弹簧阶跃响应驱动的液态形变：正圆 $\rightarrow$ 胶囊 $\rightarrow$ 圆角矩形展开，内容钉死不重排，收起时由外壳自然擦除裁切，干净落点零回弹：
 
-- **独立置顶全局悬浮窗**：贴齐屏幕顶部居中，Harness 窗口最小化、最大化或全屏切换均不影响它；平时保持优雅内敛的最小圆（DeepSeek 官方鲸鱼 Logo），无侵入感常驻；
-- **实时会话流视窗（Live Activity Stream）**：当后台会话正在执行时，轻点灵动岛即可丝滑展开宽幅面板，**实时流式呈现模型的深度思考（Reasoning / CoT）、流式输出 Token、正在调度的工具与毫秒级计时**；
-- **高危操作审批（Approval Bridge）**：无缝打通 Harness `'approval/request'` 瀑布事件，遇到工具调用或危险命令审批时直接在岛上一键「允许一次」或「拒绝」；
-- **人机交互方案选择（ACTION_REQUIRED）**：在灵动岛上以触感胶囊直接点选决策，答案即刻送回 Harness 并继续执行任务；
-- **iPhone 原生级触觉形变物理学**：
-  - **触点光晕定位**：手指/光标按下瞬间，靠近触碰接触点原位绽放高透聚光束，精准锁定无漂移；
-  - **原生弹性微放大**：按下瞬间产生 `scale(1.3)` 饱满微膨胀，松手利落复位；
-  - **极坐标连续超椭圆阻尼**：各向同性流体张力，彻底消除传统方形死角，横向拉伸延展、垂直向下重力水滴垂拉，松手伴随果冻反冲微振颤；
-- **4 套 iOS 27 / visionOS 液态玻璃材质**：深空曜石（Midnight）、超白水晶（Pure Crystal）、极光幻彩（Nebula Aurora）、微晶雾面（Frosted Obsidian）；
-- **纯数学程序化触感微音效**：基于 Web Audio API 实时演算晶体水滴涌现与收缩滑音，**零音频文件、零网络延迟、零磁盘开销**；
-- **调参毫秒级实时热联动预览**：设置页拖动滑杆时，50ms 内热广播至桌面悬浮窗，所见即所得。
-
----
-
-## 二、效果预览
-
-### 1. 实时会话流视窗（Live Activity Stream）
-会话进行中轻点展开，思考过程、输出文本与工具调度实时跟随滚屏：
 <p align="center">
-  <img src="./assets/screenshot-stream.png" width="620" alt="实时会话流视窗" />
-</p>
-
-### 2. 高危操作审批卡片（Approval Bridge）
-工具调用或提权操作即刻在岛上呈现盾牌安全卡片，支持一键决策：
-<p align="center">
-  <img src="./assets/screenshot-approval.png" width="480" alt="操作审批确认卡片" />
-</p>
-
-### 3. 按压触点局部光晕与原生放大（Touch-Down Feedback）
-光标触点原位绽放微晶高光，继承 `scale(1.3)` 弹性放大与极坐标流体拉伸：
-<p align="center">
-  <img src="./assets/screenshot-pressed.png" width="340" alt="触点光晕与按压放大" />
+  <img src="./assets/demo-morph.gif" width="600" alt="液态形变动效展示" />
 </p>
 
 ---
 
-## 三、系统架构
+### 2. iPhone 原生触感：按压放大、触点光晕与流体果冻回弹（Haptics & Jiggle）
+还原真实流体手感：按下瞬间 `scale(1.3)` 饱满微膨胀，触碰点原位绽放聚焦水光；拖动时沿极坐标光滑超椭圆流体张力拉伸，松手伴随果冻微颤（Damped Harmonic Oscillator）瞬时归位：
+
+<p align="center">
+  <img src="./assets/demo-interactive.gif" width="600" alt="原生按压放大与流体拖拽果冻回弹动效" />
+</p>
+
+---
+
+### 3. 会话进行中：轻点展开实时会话流视窗（Live Activity Stream）
+会话正在进行时，灵动岛能量环进入呼吸微脉冲；轻点岛体即刻展开宽幅视窗，实时呈现**深度思考链（Reasoning / CoT）、流式输出 Token、正在调度的工具与毫秒级计时**，一键丝滑折叠：
+
+<p align="center">
+  <img src="./assets/demo-stream.gif" width="600" alt="实时会话流视窗展开动效" />
+</p>
+
+---
+
+## 二、消息类型与形态预览
+
+灵动岛内置完善的消息类型注册表（`TYPE_REGISTRY`），针对不同情境呈现专属的光学倒角与交互布局：
+
+| 消息类型 | 预览效果 | 场景说明与交互特征 |
+|---|---|---|
+| **任务完成**<br>`SUCCESS` | <img src="./assets/preview-success.png" width="340" alt="成功态" /> | 翡翠极光次表面光晕，极简晶莹胶囊，展示会话标题与耗时，展示完毕后优雅收回 |
+| **任务失败**<br>`ERROR` | <img src="./assets/preview-error.png" width="340" alt="失败态" /> | 绯红烈焰自发光，精准抓取异常原因并呈现，同会话失败自动合并防刷屏 |
+| **方案选择**<br>`ACTION_REQUIRED` | <img src="./assets/preview-question.png" width="340" alt="方案选择" /> | 量子湛蓝微光，浮动晶体胶囊选项（Primary/Default 样式），支持直接在岛上单选作答并送回 Harness |
+| **操作审批**<br>`CONFIRM` | <img src="./assets/screenshot-approval.png" width="340" alt="操作审批" /> | 盾牌安全确认卡片，展示高危命令与调用标识，支持一键「允许一次」或「拒绝」，顶栏与留白防溢出 |
+| **实时会话流**<br>`LIVE_STREAM` | <img src="./assets/screenshot-stream.png" width="340" alt="实时会话流" /> | 会话进行中专属形态，顶部固定 Header 防挤压，支持思考块独立展示、代码流自动滚底与复制 |
+| **按压触点高光**<br>`TOUCH_DOWN` | <img src="./assets/screenshot-pressed.png" width="340" alt="触点高光" /> | 按下触碰点原位绽放 80px 聚焦纯净高光，等比弹性放大 `scale(1.3)`，无杂乱色块散射 |
+
+---
+
+## 三、4 套次世代液态玻璃材质预设
+
+内置 4 款次世代光学液态玻璃配方，可在设置中任意切换或跟随系统自动调度：
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Midnight%20Crystal-深空曜石-1e293b?style=for-the-badge" alt="深空曜石" />
+  <img src="https://img.shields.io/badge/Pure%20Crystal-超白水晶-f8fafc?style=for-the-badge&logoColor=000&labelColor=e2e8f0" alt="超白水晶" />
+  <img src="https://img.shields.io/badge/Nebula%20Aurora-极光幻彩-a855f7?style=for-the-badge" alt="极光幻彩" />
+  <img src="https://img.shields.io/badge/Frosted%20Obsidian-微晶雾面-475569?style=for-the-badge" alt="微晶雾面" />
+</p>
+
+1. **深空曜石（Midnight Liquid Crystal）**：经典午夜高透流体晶体，双段光锥聚焦透光 + 0.75px 彩虹色散倒角（青-紫-洋红-金），深邃静谧；
+2. **超白水晶（Pure Crystal）**：超白微晶透镜，超高白度折射玻璃 + 冰蓝紫微衍射边缘 + 柔和室内漫射投影；
+3. **极光幻彩（Nebula Aurora）**：星云极光次表面，高饱和洋红与青翠极光光锥交融 + 晶粉微光环 + 双曲面月牙粉紫高光；
+4. **微晶雾面（Frosted Obsidian）**：漫反射微晶基底 + 0.065 重度星光微晶噪点 + 低反差香槟银折射倒角，温润雅致。
+
+---
+
+## 四、系统架构与关键工程突破
 
 ```
                        ┌──────────────────── Host 进程（Node） ────────────────────┐
-  Harness 事件  ──▶  src/watcher.js   （事件层：状态流/会话流捕获 → Notification）
+  Harness 事件  ──▶  src/watcher.js   （事件层：状态流/会话流实时捕获 → Notification）
                        │
   user-questions ──▶  src/questions.js（交互层：提问瀑布 prepend + 岛上等待 + 答案回传）
   approval/req   ──▶  src/approval.js （审批层：工具权限瀑布 prepend + 允许/拒绝决议）
@@ -79,17 +101,18 @@
                         ui/window.html 加载 ui/island.js
 ```
 
-### 关键架构保障（踩过的坑与已解决的机制）
-1. **独立 Electron 运行时复用**：Host 运行于 Node 环境，不具备窗口能力。插件就地提取 Harness 自带的 Electron 二进制文件，另起独立进程管理常驻悬浮窗；
-2. **窗口常显与穿透锁**：为防止 Chromium 将隐藏窗口当成后台标签页挂起节流，悬浮窗在物理上**始终常显（全透明）**，依靠 `setIgnoreMouseEvents` 实现像素级点击穿透；当鼠标处于按压拖拽时锁定接管，**100% 杜绝松手事件被操作系统偷走**；
-3. **极坐标连续超椭圆阻尼**：消除传统直角长方形死角，全 360° 弧形位移严格控制在水平 $\pm 9\text{px}$、垂直 $+10\text{px}$ 内，各向同性连续拉伸；
-4. **实时会话流防顶飞约束**：流视窗顶部 Header 采用硬性 Flex 锚定，超长思考链与代码块在独立内部视窗内平滑滚动，顶栏 UI 控件绝对不被顶飞。
+### 关键技术保障与踩坑解决机制
+1. **独立 Electron 运行时复用**：Host 运行于 Node 环境，不具备窗口能力。插件就地提取 Harness 自带的 Electron 运行时，另起独立进程管理常驻悬浮窗，不占额外磁盘空间；
+2. **窗口常显与穿透锁（防死锁）**：为防止 Chromium 将隐藏窗口当成后台标签页挂起节流，悬浮窗在物理上**始终常显（完全透明）**，依靠 `setIgnoreMouseEvents` 实现像素级点击穿透；当鼠标处于按压拖拽时锁定接管，**100% 杜绝松手事件被操作系统偷走导致卡死**；
+3. **极坐标连续超椭圆阻尼**：消除传统方形盒子的直角死角，全 360° 弧形位移严格控制在水平 $\pm 9\text{px}$、垂直 $+10\text{px}$ 内，各向同性连续拉伸；
+4. **实时会话流防顶飞约束**：流视窗顶部 Header 采用硬性 Flex 锚定，超长思考链与代码块在独立内部视窗内平滑滚动，顶栏 UI 控件绝对不被顶飞；
+5. **纯数学程序化触感微音效**：基于 Web Audio API 纯数学振荡器实时演算，零外部音频资源依赖。
 
 ---
 
-## 四、形态与参数配置
+## 五、形态与参数配置
 
-在 **设置 → 灵动岛** 调整任何滑杆或开关，灵动岛均会在 **50ms 内即时响应**，无需保存即可对照微调：
+在 **设置 → 灵动岛** 调整任何滑杆或开关，灵动岛均会在 **50ms 内即时热响应**，无需保存即可对照微调：
 
 | 配置项 | 默认值 | 范围 | 说明 |
 |---|---|---|---|
@@ -110,7 +133,7 @@
 
 ---
 
-## 五、安装与部署
+## 六、安装与使用
 
 ### 方式 A：通过 DeepSeek Harness 插件管理器（推荐）
 在 Harness 会话中调用 `plugin_manager` 安装即可：
@@ -126,7 +149,7 @@ await plugin_manager({ action: 'install_bundle', target: 'dsh-island' })
 
 ---
 
-## 六、验证与测试体系
+## 七、验证与测试体系
 
 本项目包含 **185 项离线自动化测试** 以及基于真实 Electron 运行时的 **CDP 逐帧渲染探针**：
 
@@ -146,7 +169,7 @@ node tests/host-selftest.mjs   # 93 项：实时流事件捕获、操作审批�
 
 ---
 
-## 七、开源许可证
+## 八、开源许可证
 
-本项目采用 [MIT License](./LICENSE) 授权许可。
+本项目采用 [MIT License](./LICENSE) 授权许可。  
 Copyright (c) 2026 inju0524 (Yin Shaokai).
