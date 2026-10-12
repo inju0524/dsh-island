@@ -1,0 +1,15 @@
+# dsh-island bundle patch：把插件挂进 profile 的层栈。
+#
+# Host 半身（事件层 / 消息层 / 状态管理 / 路由）由这一行挂载；
+# 浏览器半身（灵动岛 UI + 动画）由 package.json 的 dsh.client 声明，
+# 并绑定在 name 为裸包名的这一行上。
+#
+# 这里的 config 只是「出厂种子」：真正生效的值 =
+#   内置默认值 ← 这里的 config ← <DSH_HOME>/dsh-island/config.json（设置页写这里）
+# 所以设置页的改动不会被这份 YAML 覆盖；想改出厂默认才动这里。
+- insert:
+    - id: dsh-island
+      name: 'dsh-island'
+      config:
+        enabled: true
+        persistent: true

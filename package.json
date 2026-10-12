@@ -1,0 +1,61 @@
+{
+  "name": "dsh-island",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DeepSeek Harness 灵动岛：屏幕顶部中央的 Apple Liquid Glass 液态玻璃悬浮通知与交互组件。",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale",
+    "src",
+    "ui",
+    "desktop",
+    "README.md"
+  ],
+  "meta": {
+    "title": "灵动岛",
+    "description": "Apple Liquid Glass 风格的顶部悬浮通知：任务完成 / 执行失败 / 需要选择方案，液态形变进出场，可直接在岛上完成选择。独立置顶悬浮窗，Harness 最小化也能看到。"
+  },
+  "icon": "./icon.svg",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "dynamic-island",
+    "liquid-glass",
+    "notification"
+  ],
+  "author": "inju0524 <yinshaokai123@163.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inju0524/dsh-island.git"
+  },
+  "scripts": {
+    "test": "node tests/selftest.mjs && node tests/host-selftest.mjs"
+  },
+  "dsh": {
+    "id": "dsh-island",
+    "name": "灵动岛",
+    "permissions": "独立置顶悬浮窗（复用 Harness 自带 Electron 运行时另起进程）, 设置页（settings.section）, 本地 HTTP 路由（/api/dsh-island/*）, 用户提问应答（user-questions/request）, 操作审批决议（approval/request）, 会话流捕获（agent/assistant-stream）",
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  },
+  "license": "MIT"
+}

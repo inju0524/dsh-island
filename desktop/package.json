@@ -1,0 +1,7 @@
+{
+  "name": "dsh-island-window",
+  "version": "1.0.0",
+  "private": true,
+  "description": "dsh-island 桌面悬浮窗（复用 Harness 自带的 Electron 运行时）",
+  "main": "main.js"
+}

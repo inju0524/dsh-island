@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>dsh-island</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: transparent;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    #island-mount { position: absolute; inset: 0; }
+  </style>
+</head>
+<body>
+  <div id="island-mount"></div>
+  <script src="/api/dsh-island/ui/island.js"></script>
+  <script>
+    (function () {
+      'use strict'
+
+      var host = window.islandHost || null
+      var mountEl = document.getElementById('island-mount')
+      var island = null
+      var interactive = false
+      var healthFailures = 0
+
+      function setInteractive(next) {
+        if (interactive === next) return
+        interactive = next
+        if (host) host.setInteractive(next)
+      }
+
+      if (typeof window.DshIsland !== 'object' || window.DshIsland === null) {
+        // 本体没加载出来：别留一块看不见但会吃点击的透明遮挡。
+        if (host) host.quit()
+        return
+      }
+
+      /* 这个窗口就是灵动岛本身 —— 屏幕顶部居中、永远置顶、完全透明。
+         窗口**常显**（见 desktop/main.js 的注释：一隐藏就会被 Chromium 冻结），
+         所以这里不需要任何显隐 / 模式判断，只管画好那一个圆形或卡片。 */
+      island = window.DshIsland.mount(mountEl, {})
+
+      /* 整窗默认穿透；只有鼠标真的落在**正在显示的**灵动岛上时才接管点击。
+         必须同时看 state：灵动岛隐藏时 getBoundingClientRect 仍返回上一帧的几何，
+         只看矩形会在屏幕顶部留一条看不见但会吃点击的区域。
+         若状态为 HIDDEN，必须显式重置为穿透，防止残留点击阻挡。
+         关键：若鼠标处于按压或拖拽中（event.buttons !== 0 或 is-dragging），必须锁定交互接管，
+         绝不能切回穿透，否则 Windows 系统会拦截松手事件导致拖拽卡死不复位！ */
+      window.addEventListener('mousemove', function (event) {
+        var root = mountEl.querySelector('.dsh-island-root')
+        var surface = mountEl.querySelector('.dsh-island-surface')
+        if (root === null || surface === null) return
+        if (root.getAttribute('data-state') === 'HIDDEN') {
+          setInteractive(false)
+          return
+        }
+        if (event.buttons !== 0 || surface.classList.contains('is-dragging')) {
+          setInteractive(true)
+          return
+        }
+        var rect = surface.getBoundingClientRect()
+        setInteractive(
+          event.clientX >= rect.left - 4 && event.clientX <= rect.right + 4
+          && event.clientY >= rect.top - 4 && event.clientY <= rect.bottom + 4,
+        )
+      }, { passive: true })
+
+      window.addEventListener('mouseup', function () {
+        setTimeout(function () {
+          var root = mountEl.querySelector('.dsh-island-root')
+          var surface = mountEl.querySelector('.dsh-island-surface')
+          if (!surface || !root || root.getAttribute('data-state') === 'HIDDEN') {
+            setInteractive(false)
+          }
+        }, 50)
+      })
+
+      window.addEventListener('mouseout', function (event) {
+        if (event.relatedTarget === null && event.buttons === 0) setInteractive(false)
+      })
+
+      window.addEventListener('blur', function () {
+        setInteractive(false)
+      })
+
+      /* Host 没了就自己退出，别在屏幕上留一个永远不动的空窗。 */
+      setInterval(function () {
+        fetch('/api/dsh-island/health', { cache: 'no-store' }).then(function (response) {
+          if (response.ok) {
+            healthFailures = 0
+          } else {
+            healthFailures += 1
+            if (healthFailures >= 3 && host) host.quit()
+          }
+        }).catch(function () {
+          healthFailures += 1
+          if (healthFailures >= 3 && host) host.quit()
+        })
+      }, 15000)
+    })()
+  </script>
+</body>
+</html>

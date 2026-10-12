@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+
+# Runtime artifacts and generated files
+desktop-runtime/
+config.json
+*.log
+debug.log
+
+# System & OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
